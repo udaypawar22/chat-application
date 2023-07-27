@@ -21,7 +21,7 @@ export default function Chat() {
   }, []);
 
   function connectToWs() {
-    const ws = new WebSocket(import.meta.env.WS_URL);
+    const ws = new WebSocket(import.meta.env.VITE_API_WS_URL);
     setWs(ws);
     ws.addEventListener("message", handleMsg);
     ws.addEventListener("close", () => {
