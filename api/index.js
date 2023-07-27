@@ -53,14 +53,15 @@ async function uploadToS3(file) {
 }
 
 app.get("/api/test", (req, res) => {
+  console.log(process.env.MONGO_URL);
   res.json("ok");
 });
 
 app.post("/api/register", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
   const { userName: username, password } = req.body;
   console.log({ username, password });
   try {
+    await mongoose.connect(process.env.MONGO_URL);
     const hashedPass = bcrypt.hashSync(password, bcryptSalt);
     const createdUser = await User.create({ username, password: hashedPass });
     jwt.sign(
@@ -84,13 +85,15 @@ app.post("/api/register", async (req, res) => {
 });
 
 app.get("/api/people", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
+  await mongoose.connect(process.env.MONGO_URL);
+
   const users = await User.find({}, { _id: 1, username: 1 });
   res.json(users);
 });
 
-app.get("/api/profile", (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
+app.get("/api/profile", async (req, res) => {
+  await mongoose.connect(process.env.MONGO_URL);
+
   const token = req.cookies?.token;
   if (token) {
     jwt.verify(token, jwtSecret, {}, (err, userData) => {
@@ -104,7 +107,8 @@ app.get("/api/profile", (req, res) => {
 });
 
 app.post("/api/login", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
+  await mongoose.connect(process.env.MONGO_URL);
+
   const { userName: username, password } = req.body;
   const foundUser = await User.findOne({ username });
   if (foundUser) {
@@ -149,7 +153,8 @@ async function getUserDataFromReq(req) {
 }
 
 app.get("/api/messages/:userId", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
+  await mongoose.connect(process.env.MONGO_URL);
+
   const { userId } = req.params;
   const userData = await getUserDataFromReq(req);
   const ourUserId = userData.userId;
