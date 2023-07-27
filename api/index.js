@@ -59,6 +59,7 @@ app.get("/api/test", (req, res) => {
 app.post("/api/register", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
   const { userName: username, password } = req.body;
+  console.log({ username, password });
   try {
     const hashedPass = bcrypt.hashSync(password, bcryptSalt);
     const createdUser = await User.create({ username, password: hashedPass });
@@ -97,6 +98,7 @@ app.get("/api/profile", (req, res) => {
       res.json(userData);
     });
   } else {
+    console.log("inside");
     res.status(401).json("no token");
   }
 });
