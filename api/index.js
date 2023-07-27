@@ -15,7 +15,6 @@ const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 const bucket = "mernchatapp";
 dotenv.config();
 
-app.use("/uploads", express.static(__dirname + "\\uploads"));
 app.use(express.json());
 app.use(
   cors({
@@ -53,11 +52,11 @@ async function uploadToS3(file) {
   return fileName;
 }
 
-app.get("/test", (req, res) => {
+app.get("/api/test", (req, res) => {
   res.json("ok");
 });
 
-app.post("/register", async (req, res) => {
+app.post("/api/register", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
   const { userName: username, password } = req.body;
   try {
@@ -83,13 +82,13 @@ app.post("/register", async (req, res) => {
   }
 });
 
-app.get("/people", async (req, res) => {
+app.get("/api/people", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
   const users = await User.find({}, { _id: 1, username: 1 });
   res.json(users);
 });
 
-app.get("/profile", (req, res) => {
+app.get("/api/profile", (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
   const token = req.cookies?.token;
   if (token) {
@@ -102,7 +101,7 @@ app.get("/profile", (req, res) => {
   }
 });
 
-app.post("/login", async (req, res) => {
+app.post("/api/login", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
   const { userName: username, password } = req.body;
   const foundUser = await User.findOne({ username });
@@ -129,7 +128,7 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.post("/logout", (req, res) => {
+app.post("/api/logout", (req, res) => {
   res.cookie("token", "", { sameSite: "none", secure: true }).json("OK");
 });
 
@@ -147,7 +146,7 @@ async function getUserDataFromReq(req) {
   });
 }
 
-app.get("/messages/:userId", async (req, res) => {
+app.get("/api/messages/:userId", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
   const { userId } = req.params;
   const userData = await getUserDataFromReq(req);
