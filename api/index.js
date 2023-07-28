@@ -19,7 +19,7 @@ app.use(express.json());
 app.use(
   cors({
     credentials: true,
-    origin: "*",
+    origin: process.env.CLIENT_URL,
   })
 );
 app.use(cookieParser());
@@ -45,7 +45,6 @@ async function uploadToS3(file) {
       Bucket: bucket,
       Body: bufferData,
       Key: fileName,
-      // ContentType: detectedType ? detectedType : "application/octet-stream",
       ACL: "public-read",
     })
   );
@@ -53,13 +52,11 @@ async function uploadToS3(file) {
 }
 
 app.get("/api/test", (req, res) => {
-  console.log(process.env.MONGO_URL);
   res.json("ok");
 });
 
 app.post("/api/register", async (req, res) => {
   const { userName: username, password } = req.body;
-  console.log({ username, password });
   try {
     await mongoose.connect(process.env.MONGO_URL);
     const hashedPass = bcrypt.hashSync(password, bcryptSalt);
@@ -101,7 +98,6 @@ app.get("/api/profile", async (req, res) => {
       res.json(userData);
     });
   } else {
-    console.log("inside");
     res.status(401).json("no token");
   }
 });
