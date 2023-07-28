@@ -42,7 +42,6 @@ export default function Chat() {
 
   function handleMsg(e) {
     const msgData = JSON.parse(e.data);
-    console.log({ msgData });
     if ("online" in msgData) {
       showOnlinePeople(msgData.online);
     } else if ("text" in msgData || "file" in msgData) {
@@ -120,7 +119,6 @@ export default function Chat() {
       offlinePeopleArr.forEach((p) => {
         offlinePeople[p._id] = p.username;
       });
-      console.log(offlinePeople);
       setOfflinePeople(offlinePeople);
     });
   }, [onlinePeople]);
@@ -141,7 +139,7 @@ export default function Chat() {
   return (
     <div className="flex h-screen">
       <div className="flex flex-col bg-white w-1/3 xl:w-1/4 border-r border-gray-100">
-        <div className="flex-grow">
+        <div className="flex-grow overflow-y-scroll thin-scroll">
           <Logo />
           {Object.keys(peopleWithoutLoggedInUser).map((userId) => (
             <Contacts
